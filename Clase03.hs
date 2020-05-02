@@ -1,3 +1,5 @@
+module Clase03
+where
 -- | funcion de tribonacci
 tribonacci :: Int -> Int
 tribonacci n | n <= 2 =2
@@ -34,4 +36,4 @@ potenciaDe m n = m `mod` n == 0 && potenciaDe (m `div` n) (n)
 
 -- Otra posibilidad de PotenciaDe en una sola línea de código. -
 esPotenciaDe2 :: Int -> Int -> Bool
-esPotenciaDe2 n m = (n == 1) || esPotenciaDe' (div n m) m && (mod n m == 0)
+esPotenciaDe2 n m = (n == 1) || esPotenciaDe2 (div n m) m && (mod n m == 0)
