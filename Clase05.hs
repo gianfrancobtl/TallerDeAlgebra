@@ -1,11 +1,14 @@
 module Clase05
 where
+import Clase03
+
+
 -- | Funcion productoria.
 prod :: Int -> Int -> Int
 prod d h | d == h =d
          | otherwise = h * prod d (h-1)
 
--- | Funcion productoria 
+-- | Funcion productoria
 prod' :: Int -> Int -> Int
 prod' d h | d == h =d
           | otherwise = d * prod' (d+1) h
@@ -19,7 +22,7 @@ fact n = n * (fact(n-1))
 fact' :: Int -> Int
 fact' n = prod 1 n
 
--- Ejercicio 1 
+-- Ejercicio 1
 sumaDivisoresHasta :: Int -> Int -> Int
 sumaDivisoresHasta n k | k == 1 =1
                        | (n `mod` k == 0) = k + sumaDivisoresHasta n (k-1)
@@ -29,19 +32,19 @@ sumaDivisoresHasta n k | k == 1 =1
 sumaDivisores :: Int -> Int
 sumaDivisores n = sumaDivisoresHasta n n
 
--- Otra resolución del ej. 2 
+-- Otra resolución del ej. 2
 -- Función auxiliar con término k creciente y caso base n.
 sumaDivisoresDesde :: Int -> Int -> Int
 sumaDivisoresDesde n k | k == n =n
                         | (n `mod` k == 0) = k + sumaDivisoresDesde n (k+1)
                         | otherwise        = sumaDivisoresDesde n (k+1)
 
--- Si k es 1, luego se suman todos los divisores DESDE 1 HASTA N 
+-- Si k es 1, luego se suman todos los divisores DESDE 1 HASTA N
 sumaDivisores' :: Int -> Int
 sumaDivisores' n = sumaDivisoresDesde n 1
 
 -- Ejercicio 3
-menorDivisorDesde :: Int -> Int -> Int 
+menorDivisorDesde :: Int -> Int -> Int
 menorDivisorDesde n k | (n `mod` k == 0) =k
                       | otherwise        = menorDivisorDesde n (k+1)
 
@@ -82,8 +85,33 @@ menorFactDesdeDesde i m | (fact i) >= m = fact i
                         | otherwise     = menorFactDesdeDesde (i + 1) m
 
 -- Ejercicio 7
+--
+mayorFactHasta :: Int -> Int
+mayorFactHasta m = mayorFactHastaHasta m m
+
+mayorFactHastaHasta :: Int -> Int -> Int
+mayorFactHastaHasta i m | (fact i) >= m = fact (i-1)
+                        | otherwise     = mayorFactHastaHasta (i + 1) m
+
 -- Ejercicio 8
+-- | La función esFact determina si un número es factorial (True) o no (False).
+esFact :: Int -> Bool
+esFact 0 = False
+esFact n | (n == menorFactDesde n) =True
+         | otherwise = False
+
 -- Ejercicio 9
+esFibonacci :: Int -> Bool
+esFibonacci 0 = False
+esFibonacci n | (esFiboHasta 1 n) == n
+
+-- esFiboHasta :: Int -> Int -> Int
+-- esFiboHasta i m | m > i =
+--                 | (fibo i) == m = fibo i
+
+fibo
+
+
 -- Ejercicio 10
 -- Ejercicio 11
 -- Ejercicio 12
