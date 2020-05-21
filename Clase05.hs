@@ -2,7 +2,6 @@ module Clase05
 where
 import Clase03
 
-
 -- | Funcion productoria.
 prod :: Int -> Int -> Int
 prod d h | d == h =d
@@ -36,8 +35,8 @@ sumaDivisores n = sumaDivisoresHasta n n
 -- Función auxiliar con término k creciente y caso base n.
 sumaDivisoresDesde :: Int -> Int -> Int
 sumaDivisoresDesde n k | k == n =n
-                        | (n `mod` k == 0) = k + sumaDivisoresDesde n (k+1)
-                        | otherwise        = sumaDivisoresDesde n (k+1)
+                       | (n `mod` k == 0) = k + sumaDivisoresDesde n (k+1)
+                       | otherwise        = sumaDivisoresDesde n (k+1)
 
 -- Si k es 1, luego se suman todos los divisores DESDE 1 HASTA N
 sumaDivisores' :: Int -> Int
@@ -87,7 +86,7 @@ menorFactDesdeDesde i m | (fact i) >= m = fact i
 -- Ejercicio 7
 --
 mayorFactHasta :: Int -> Int
-mayorFactHasta m = mayorFactHastaHasta m m
+mayorFactHasta m = mayorFactHastaHasta 1 m
 
 mayorFactHastaHasta :: Int -> Int -> Int
 mayorFactHastaHasta i m | (fact i) >= m = fact (i-1)
@@ -101,22 +100,63 @@ esFact n | (n == menorFactDesde n) =True
          | otherwise = False
 
 -- Ejercicio 9
+-- | La función esFibonacci determina si n pertenece a la sucesión de Fibonacci o no.
 esFibonacci :: Int -> Bool
 esFibonacci 0 = False
-esFibonacci n | (esFiboHasta 1 n) == n
+esFibonacci n = (esFiboHasta 1 n) == n
 
--- esFiboHasta :: Int -> Int -> Int
--- esFiboHasta i m | m > i =
---                 | (fibo i) == m = fibo i
-
-fibo
-
+-- fibo es importada del módulo Clase03
+esFiboHasta :: Int -> Int -> Int
+esFiboHasta m n | ((fibo m) >= n) =fibo m
+                | otherwise = esFiboHasta (m + 1) n
 
 -- Ejercicio 10
+-- Recursión: Suma los primos hasta el nésimo primo.
+sumaInicialDePrimos :: Int -> Int
+sumaInicialDePrimos 1 = 2
+sumaInicialDePrimos n = (nEsimoPrimo n) + sumaInicialDePrimos(n-1)
+
+esSumaInicialDePrimos' :: Int -> Int -> Bool
+esSumaInicialDePrimos' n m | n == (sumaInicialDePrimos m) = True
+                           | n > (sumaInicialDePrimos m) = esSumaInicialDePrimos' n (m+1)
+                           | otherwise = False
+
+esSumaInicialDePrimos :: Int -> Bool
+esSumaInicialDePrimos n = esSumaInicialDePrimos' n 1
+
 -- Ejercicio 11
+-- Se hace recursión sobre n2
+tomaValorMax :: Int -> Int -> Int 
+tomaValorMax n1 n2 | (n1 == n2) = n1
+                   | (sumaDivisores n2) > (sumaDivisores (tomaValorMax n1 (n2 - 1))) =n2
+                   | otherwise = tomaValorMax n1 (n2 - 1)
+
 -- Ejercicio 12
+
 -- Ejercicio 13
+sumaDosPrimos :: Int -> Bool
+sumaDosPrimos n = esSumaDePrimosDesde n 2
+
+esSumaDePrimosDesde :: Int -> Int -> Bool
+esSumaDePrimosDesde n k | k > n =False
+                        | esPrimo (k) && esPrimo (n- k) =True
+                        | otherwise = esSumaDePrimosDesde n (k + 1)
+
 -- Ejercicio 14
+goldbach :: Int -> Bool
+goldbach n | ((n `mod` 2) /= 0) || (n > round( 4*10**18 )) =undefined
+           | (n == 4) = True
+           | (sumaDosPrimos n) = goldbach (n - 2)
+
 -- Ejercicio 15
+primosGem :: Int -> Int
+primosGem n = primosGem' 3 n
+
+primosGem' :: Int -> Int -> Int
+primosGem' n k | n + 1 == k = 0
+               | esPrimo n && esPrimo (k + 2) =  1 + primosGem' (n + 1) k
+               | otherwise = primosGem' (n + 1) k
+
 -- Ejercicio 16
+
 -- Ejercicio 17
