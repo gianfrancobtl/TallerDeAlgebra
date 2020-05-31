@@ -25,7 +25,28 @@ union (x:xs) c2 = union xs (agregar x c2)
 interseccion :: Set Int -> Set Int -> Set Int
 interseccion [] _ = []
 interseccion (x:xs) c2 | pertenece x c2 = x : (interseccion xs c2)
-                       | otherwise = (interseccion xs c2)
+                       | otherwise      = (interseccion xs c2)
 
 diferencia :: Set Int -> Set Int -> Set Int
-diferencia 
+diferencia [] _      = []
+diferencia (x:xs) c2 | not (pertenece x c2) = x : diferencia xs c2
+                     | otherwise            = diferencia xs c2
+
+diferenciaSimetrica :: Set Int -> Set Int -> Set Int
+diferenciaSimetrica c1 c2 = union (diferencia c1 c2) (diferencia c2 c1)
+
+agregarC :: Set Int -> Set (Set Int) -> Set (Set Int)
+agregarC xs xss | xs `perteneceC` xss = xss
+                | otherwise = xs:xss
+
+perteneceC :: Set Int -> Set (Set Int) -> Bool
+perteneceC xs []       = False
+perteneceC xs (ys:yss) = iguales xs ys || perteneceC xs yss
+
+agregarATodos :: Int -> Set (Set Int) -> Set (Set Int)
+agregarATodos x []     = []
+agregarATodos x (c:cs) = agregarC (agregar x c) (agregarATodos x cs)
+
+partes :: Set Int -> Set (Set Int)
+partes []     = [[]]
+partes (x:xs) = union (partes xs) (agregarATodos x (partes xs))
