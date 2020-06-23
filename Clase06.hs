@@ -1,3 +1,6 @@
+module Clase06
+where
+
 sumatoria :: [Int] -> Int
 sumatoria l | l == [] = 0
             | otherwise = head l + sumatoria (tail l)

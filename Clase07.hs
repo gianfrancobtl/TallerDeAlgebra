@@ -1,3 +1,6 @@
+module Clase07
+where
+
 type Set a = [a]
 
 vacio :: Set Int
