@@ -35,7 +35,6 @@ sistemaSimplifEquiv (e:es) = (solucionEc e):(sistemaSimplifEquiv es)
 
 
 -- -- 3 --------------------
-
 -- Tomo los módulos de los S.S.
 -- [(11,25), (4,22)] --> [25,22]
 modulos :: [(Int, Int)] -> [Int]
@@ -100,7 +99,6 @@ solucSistemaPotenciasPrimo (e1:e2:es) = solucSistemaPotenciasPrimo ((solucDosEcP
 
 
 -- 5 --------------------
-
 -- Dado un sistema y un primo p (MALO), devuelve los dos sistemas que surgen al desdoblar cada ecuación del sistema original
 -- según el primo p.
 desdoblarSistemaEnFcionPrimo :: [(Int, Int)] -> Int -> ([(Int, Int)], [(Int, Int)])
@@ -120,7 +118,7 @@ desdoblarSistemaEnFcionPrimo ((r, m):es) p -- si el primo malo p no divide a m, 
 --
 sistemaEquivSinPrimosMalosAux :: [(Int, Int)] -> [Int] -> [(Int, Int)]
 sistemaEquivSinPrimosMalosAux sist [] = sist
--- caso interesante: si todavia hay un primo malo en el sistema,
+-- caso interesante: si todavia hay un primo malo en el sistema.
 sistemaEquivSinPrimosMalosAux sist (p:ps) = (solucSistemaPotenciasPrimo pri):(sistemaEquivSinPrimosMalosAux seg ps)
  where (pri, seg) = desdoblarSistemaEnFcionPrimo sist p
 
@@ -130,7 +128,7 @@ sistemaEquivSinPrimosMalos sist = sistemaEquivSinPrimosMalosAux sist (todosLosPr
 
 
 -- 6 -------------------
-
+-- Aplica el teorema chino del resto:
 solucSistemaModCoprimos :: [(Int, Int)] -> (Int, Int)
 solucSistemaModCoprimos [e] = e
 solucSistemaModCoprimos ((r1, m1):(r2, m2):es) = solucSistemaModCoprimos ((r, m1*m2):es)
@@ -145,7 +143,7 @@ solucSistema sist = solucSistemaModCoprimos ( sistemaEquivSinPrimosMalos ( siste
 
 -- Ej 1: dado un sistema general, decide si cada una de sus ecuaciones vista independientemente de las otras, tiene solucion.
 cadaEcTieneSoluc :: [(Int, Int, Int)] -> Bool
-cadaEcTieneSoluc [e] = True
+cadaEcTieneSoluc [] = True
 cadaEcTieneSoluc ((a, b, m):es) = b `mod` d == 0 && cadaEcTieneSoluc es
       where d = mcd a m
 
@@ -173,5 +171,35 @@ sistemaEquivSinPrimosMalosAux' sist (p:ps) | (solucSistemaPotenciasPrimo' pri) =
 sistemaEquivSinPrimosMalos' :: [(Int, Int)] -> Bool
 sistemaEquivSinPrimosMalos' sist = sistemaEquivSinPrimosMalosAux' sist (todosLosPrimosMalos sist)
 
+-- tieneSolucionSimplif :: [(Int, Int)] -> Bool
+-- tieneSolucionSimplif sist = sistemaEquivSinPrimosMalos' sist
+
+--
 tieneSolucionSimplif :: [(Int, Int)] -> Bool
-tieneSolucionSimplif sist = sistemaEquivSinPrimosMalos' sist
+tieneSolucionSimplif sist = tieneSistemaEquivalenteSinPrimosMalos sist (todosLosPrimosMalos sist)
+
+tieneSistemaEquivalenteSinPrimosMalos :: [(Int, Int)] -> [Int] -> Bool
+tieneSistemaEquivalenteSinPrimosMalos _ [] = True -- si no tiene primos malos, tiene solucion por el Teorema Chino del Resto.
+tieneSistemaEquivalenteSinPrimosMalos sist (p:ps) = (tieneSolucionPotenciaPrimo pri) && (tieneSistemaEquivalenteSinPrimosMalos seg ps)
+      where  (pri,seg) = desdoblarSistemaEnFcionPrimo sist p
+
+tieneSolucionPotenciaPrimo :: [(Int, Int)] -> Bool
+tieneSolucionPotenciaPrimo [e] = True
+tieneSolucionPotenciaPrimo (e1:e2:es) = (tieneSolucionDosPotenciaPrimo e1 e2) && tieneSolucionPotenciaPrimo ((solucDosEcPotenciasPrimo e1 e2):es)
+
+tieneSolucionDosPotenciaPrimo :: (Int, Int) -> (Int, Int) -> Bool
+tieneSolucionDosPotenciaPrimo (r1,m1) (r2, m2) | m1 <= m2 = (r2-r1) `mod` m1 == 0
+                                               | otherwise = (r1-r2) `mod` m2 == 0
+
+-- Ej 3
+-- Dado un sistema cualquiera, decide si tiene solución.
+tieneSolucion :: [(Int, Int, Int)] -> Bool
+tieneSolucion sist = cadaEcTieneSoluc sist && tieneSolucionSimplif (sistemaSimplifEquiv sist)
+
+-- Ej 4
+dirichlet :: Int -> Int -> Int
+dirichlet r m = dirichletDesde r m r
+
+dirichletDesde :: Int -> Int -> Int -> Int 
+dirichletDesde r m i | esPrimo i = i
+                     | otherwise = dirichletDesde r m (i+m)
