@@ -1,13 +1,13 @@
 module CodificacionDeListas
-where 
+where
 import Clase05
 
 {--
 longitud n, dado un numero natural n calcula la longitud de la lista que codifica
-longitud 132 = 5 
+longitud 132 = 5
 --}
 longitud :: Int -> Int
-longitud n = longitudDesde n 1 
+longitud n = longitudDesde n 1
 
 longitudDesde :: Int -> Int -> Int
 longitudDesde 1 _ = 0
