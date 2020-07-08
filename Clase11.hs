@@ -25,7 +25,7 @@ inverso (a,b) = (a/(a**2 + b**2),(-b)/(a**2 + b**2))
 cociente :: Complejo -> Complejo -> Complejo
 cociente (a, b) (c, d) = ( (a*c + b*d) / (c**2+d**2) , (b*c - a*d) / (c**2 + d**2) )
 
-potencia :: Complejo -> Int -> Complejo
+potencia :: Complejo -> Integer -> Complejo
 potencia z 1      = z
 potencia (a, b) n = producto (a,b) (potencia (a,b) (n-1))
 
@@ -41,7 +41,7 @@ solucionesCuadratica a b c | haySolucionesEnR = ( ( n + cerosReales, 0), (n - ce
 modulo :: Complejo -> Float
 modulo (a,b) = sqrt(a**2 + b**2)
 
-argumento :: Complejo -> Float 
+argumento :: Complejo -> Float
 argumento (a,b) |cuadrante (a,b) == 1 = atan (b/a)
                 |cuadrante (a,b) == 2 = pi + (atan (b/a))
                 |cuadrante (a,b) == 3 = pi + (atan (b/a))
@@ -73,12 +73,17 @@ productoRealComplejo n (a,b) = (n*a,n*b)
 --
 
 raicesNEsimas :: Integer -> [Complejo]
-raicesNEsimas n = raicesNEsimasDesde 0 n 
+raicesNEsimas n = raicesNEsimasDesde 0 n
 
 raicesNEsimasDesde :: Integer -> Integer -> [Complejo]
 raicesNEsimasDesde k n | k>= n = []
                        |otherwise =(kesimaRaiz):(raicesNEsimasDesde (k+1) n)
-                       where kesimaRaiz =(cos (2*(fromInteger k)*pi/(fromInteger n)) , sin ((2*(fromInteger k)*pi)/(fromInteger n)))
+    where kesimaRaiz =(cos (2*(fromInteger k)*pi/(fromInteger n)) , sin ((2*(fromInteger k)*pi)/(fromInteger n)))
 
 -- Ejercicio
-potenciasRaizNEsima :: Int -> Int -> [Complejo]
+-- Dados k y n enteros con 0 ≤ k < n, devuelve la lista con las potencias 0, 1, . . . , n − 1 de la raız
+-- n-esima asociada a k siguiendo la formula de arriba.
+potenciasRaizNEsima :: Integer -> Integer -> [Complejo]
+potenciasRaizNEsima k 0 = []
+potenciasRaizNEsima k n = (potencia (kesimaRaiz) (n-1)) : potenciasRaizNEsima k (n-1)
+  where kesimaRaiz =(cos (2*(fromInteger k)*pi/(fromInteger n)) , sin ((2*(fromInteger k)*pi)/(fromInteger n)))
