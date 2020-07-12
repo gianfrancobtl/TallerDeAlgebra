@@ -5,7 +5,7 @@ import Clase07
 mcd :: Int -> Int -> Int
 mcd a 0 = abs a
 mcd a b = mcd b (mod a b)
--- 
+--
 -- Primera parte
 
 -- Defino tipos:
@@ -13,7 +13,7 @@ type Polinomio = [Float]
 type Monomio = (Float, Int)
 
 -- 1
--- Dada una lista cualquiera de n´umeros reales, le borra los 0s iniciales si los hubiera 
+-- Dada una lista cualquiera de n´umeros reales, le borra los 0s iniciales si los hubiera
 -- (luego el resultado cumple el invariante del tipo Polinomio).
 limpiar :: [Float] -> Polinomio
 limpiar (0:xs) = limpiar xs
@@ -125,33 +125,40 @@ potencia :: Polinomio -> Int -> Polinomio
 potencia p 1 = p
 potencia p n = producto p (potencia p (n-1))
 
---raicesMultiples :: Polinomio -> Bool
-
+raicesMultiples :: Polinomio -> Bool
+raicesMultiples p = (p `mcdP` derivada p) /= [1.0]
 
 -- Segunda Parte
--- 7
+-- Definimos un renombre de tipos para representar a los números racionales, dado que
+-- queremos poner el énfasis en la expresión de estos n´umeros como cociente entre dos enteros.
 type Racional = (Int, Int)
 
+-- 7
+-- Dados un candidato a numerador y un candidato a denominador, devuelve el racional.
 armaR :: Int -> Int -> Racional
 armaR num den | den == 0 = undefined
               | den < 0 = armaR (-num) (-den)
               | otherwise = (div num d, div den d)
- where d = mcd num den              
+  where d = mcd num den
 
+-- Suma de dos racionales.
 sumaR :: Racional -> Racional -> Racional
 sumaR (a, b) (c, d) = armaR (a*d+b*c) (b*d)
 
+-- Multiplicación de dos racionales.
 multiplicaR :: Racional -> Racional -> Racional
-multiplicaR (a, b) (c, d) = armaR (a*c) (b*d) 
+multiplicaR (a, b) (c, d) = armaR (a*c) (b*d)
 
+-- Potencia de dos racionales.
 potenciaR :: Racional -> Int -> Racional
 potenciaR _ 0 = (1, 1)
 potenciaR r n = multiplicaR (potenciaR r (n-1)) r
 
-
 -- 8
+-- Para trabajar con polinomios en Z[X], definimos un renombre de tipos:
 type PolinomioZ = [Int]
 
+-- Funciones auxiliares
 limpiarZ :: [Int] -> PolinomioZ
 limpiarZ (0:xs) = limpiarZ xs
 limpiarZ p = p
@@ -160,12 +167,15 @@ gradoZ :: PolinomioZ -> Int
 gradoZ [] = undefined
 gradoZ [x] = 0
 gradoZ (x:xs) = 1 + gradoZ xs
+--
 
+-- Evalua el Polinomio en un número racional.
 evaluarZ :: PolinomioZ -> Racional -> Racional
 evaluarZ [] _ = (0, 1)
-evaluarZ p x =   sumaR (multiplicaR (head p, 1) (potenciaR x n))  (evaluarZ (limpiarZ (tail p)) x)
+evaluarZ p x  = sumaR (multiplicaR (head p, 1) (potenciaR x n))  (evaluarZ (limpiarZ (tail p)) x)
     where n = gradoZ p
 
+--
 esRaizRacional :: PolinomioZ -> Racional -> Bool
 esRaizRacional p r = evaluarZ p r == (0,1)
 
@@ -173,8 +183,9 @@ raicesRacEnConjunto :: PolinomioZ -> Set Racional -> Set Racional
 raicesRacEnConjunto p [] = []
 raicesRacEnConjunto p (x:xs) | esRaizRacional p x = x : raicesRacEnConjunto p xs
                              | otherwise = raicesRacEnConjunto p xs
-                    
+
 -- 9
+-- Encuentra todos los divisores de un n.
 divisores :: Int -> Set Int
 divisores n = divisoresHasta n (abs n)
 
@@ -183,6 +194,7 @@ divisoresHasta n 1 = [1, -1]
 divisoresHasta n k | mod n k == 0 = [k, -k] ++ divisoresHasta n (k-1)
                    | otherwise = divisoresHasta n (k-1)
 
+-- Encuentra todos los divisores positivos de un n.
 divisoresPos :: Int -> Set Int
 divisoresPos n = divisoresPosHasta n (abs n)
 
@@ -199,10 +211,12 @@ armarSetRac :: Set (Int, Int) -> Set Racional
 armarSetRac [] = []
 armarSetRac ((num, den):xs) = agregarRac (armaR num den) (armarSetRac xs)
 
+-- Basándose en el teorema de Gauss, devuelve los candidatos a raíces racionales de p.
 candidatosRaices :: PolinomioZ -> Set Racional
 candidatosRaices [] = undefined
 candidatosRaices p | last p == 0 = agregarRac (0,1) (candidatosRaices (init p))
                    | otherwise = armarSetRac (productoCartesiano (divisores (last p)) (divisoresPos (head p)))
 
+-- Devuelve las racíces racionales del polinomio.
 raicesRacionales :: PolinomioZ -> Set Racional
 raicesRacionales p = raicesRacEnConjunto p (candidatosRaices p)
