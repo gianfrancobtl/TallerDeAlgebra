@@ -81,8 +81,9 @@ derivada p | (n == 0.0) = []
     where n = fromIntegral(grado p)
 
 derivadaNEsima :: Polinomio -> Int -> Polinomio
-derivadaNEsima p 1 = derivada p
-derivadaNEsima p n = derivadaNEsima (derivada p) (n-1)
+derivadaNEsima [] _ = []
+derivadaNEsima p 1  = derivada p
+derivadaNEsima p n  = derivadaNEsima (derivada p) (n-1)
 
 -- 5
 -- Calcula el primer monomio del cociente de la division de dos polinomios.
@@ -125,8 +126,14 @@ potencia :: Polinomio -> Int -> Polinomio
 potencia p 1 = p
 potencia p n = producto p (potencia p (n-1))
 
+-- Otra opcion, sin contador.
+multiplicidad2 :: Float -> Polinomio -> Int
+multiplicidad2 r p | resto /= [] = 0
+                   | resto == [] = 1 + multiplicidad2 r cociente
+    where (cociente, resto) = division p [1,-r]
+
 raicesMultiples :: Polinomio -> Bool
-raicesMultiples p = (p `mcdP` derivada p) /= [1.0]
+raicesMultiples p = (p `mcdP` derivada p) /= [1]
 
 -- Segunda Parte
 -- Definimos un renombre de tipos para representar a los números racionales, dado que
